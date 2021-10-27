@@ -59,13 +59,13 @@ void Dummy_Handler(void);
 
 /* Cortex-M7 core handlers */
 // clang-format off
-void NonMaskableInt_Handler   ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+void NMI_Handler              ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void HardFault_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void MemoryManagement_Handler ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+void MemManage_Handler        ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void BusFault_Handler         ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void UsageFault_Handler       ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void SVCall_Handler           ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
-void DebugMonitor_Handler     ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+void SVC_Handler              ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
+void DebugMon_Handler         ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void PendSV_Handler           ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 void SysTick_Handler          ( void ) __attribute__ ((weak, alias("Dummy_Handler")));
 // clang-format on
@@ -140,17 +140,17 @@ __attribute__((section(".vectors"))) const DeviceVectors exception_table = {
   .pvStack = (void*) (&_estack),
 
   .pfnReset_Handler              = Reset_Handler,
-  .pfnNMI_Handler                = NonMaskableInt_Handler,
+  .pfnNMI_Handler                = NMI_Handler,
   .pfnHardFault_Handler          = HardFault_Handler,
-  .pfnMemManage_Handler          = MemoryManagement_Handler,
+  .pfnMemManage_Handler          = MemManage_Handler,
   .pfnBusFault_Handler           = BusFault_Handler,
   .pfnUsageFault_Handler         = UsageFault_Handler,
   .pfnReserved1_Handler          = 0uL, /* Reserved */
   .pfnReserved2_Handler          = 0uL, /* Reserved */
   .pfnReserved3_Handler          = 0uL, /* Reserved */
   .pfnReserved4_Handler          = 0uL, /* Reserved */
-  .pfnSVC_Handler                = SVCall_Handler,
-  .pfnDebugMon_Handler           = DebugMonitor_Handler,
+  .pfnSVC_Handler                = SVC_Handler,
+  .pfnDebugMon_Handler           = DebugMon_Handler,
   .pfnReserved5_Handler          = 0uL, /* Reserved */
   .pfnPendSV_Handler             = PendSV_Handler,
   .pfnSysTick_Handler            = SysTick_Handler,

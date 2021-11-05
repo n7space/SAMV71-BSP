@@ -164,7 +164,8 @@ SECTIONS
     {
       . = ALIGN(4);
       sdramMemory_begin = ABSOLUTE(.);
-      . = . + LENGTH(sdram);
+      *(.sdram)
+      *(.sdram*)
       sdramMemory_end = ABSOLUTE(.);
     } > sdram
 }

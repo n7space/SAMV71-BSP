@@ -163,10 +163,8 @@ SECTIONS
     .sdramMemorySection (NOLOAD):
     {
       . = ALIGN(4);
-      sdramMemory_begin = ABSOLUTE(.);      
-      *(.sdram)
-      *(.sdram*)
-      . = ALIGN(4);
+      sdramMemory_begin = ABSOLUTE(.);
+      . = . + LENGTH(sdram);
       sdramMemory_end = ABSOLUTE(.);
     } > sdram
 }

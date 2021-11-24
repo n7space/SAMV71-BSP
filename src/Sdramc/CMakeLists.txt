@@ -6,7 +6,7 @@ target_sources(Samv71Sdramc
     PUBLIC      Sdramc.h
                 SdramcRegisters.h)
 target_include_directories(Samv71Sdramc
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Sdramc
     PRIVATE     common_build_options
                 bsp_build_options)

@@ -5,7 +5,7 @@ target_sources(Samv71Stubs
     PRIVATE     Stubs.c
     PUBLIC      Stubs.h)
 target_include_directories(Samv71Stubs
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Stubs
     PRIVATE     common_build_options
                 bsp_build_options

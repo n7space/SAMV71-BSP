@@ -5,7 +5,7 @@ target_sources(Samv71Startup
     PRIVATE     startup_samv71q21.c
     PUBLIC      startup_samv71q21.h)
 target_include_directories(Samv71Startup
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Startup
     PRIVATE     common_build_options
                 bsp_build_options

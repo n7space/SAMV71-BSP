@@ -6,7 +6,7 @@ target_sources(Samv71Pio
     PUBLIC      Pio.h
                 PioRegisters.h)
 target_include_directories(Samv71Pio
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Pio
     PRIVATE     common_build_options
                 bsp_build_options)

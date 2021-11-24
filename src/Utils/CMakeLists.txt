@@ -6,7 +6,7 @@ target_sources(Samv71Utils
     PUBLIC      ByteFifo.h
                 Utils.h)
 target_include_directories(Samv71Utils
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Utils
     PRIVATE     common_build_options
                 bsp_build_options)

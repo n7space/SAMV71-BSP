@@ -6,7 +6,7 @@ target_sources(Samv71Tic
     PUBLIC      Tic.h
                 TicRegisters.h)
 target_include_directories(Samv71Tic
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Tic
     PRIVATE     common_build_options
                 bsp_build_options)

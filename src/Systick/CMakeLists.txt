@@ -6,7 +6,7 @@ target_sources(Samv71Systick
     PUBLIC      Systick.h
                 SystickRegisters.h)
 target_include_directories(Samv71Systick
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Systick
     PRIVATE     common_build_options
                 bsp_build_options)

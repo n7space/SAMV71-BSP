@@ -6,7 +6,7 @@ target_sources(Samv71Wdt
     PUBLIC      Wdt.h
                 WdtRegisters.h)
 target_include_directories(Samv71Wdt
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Wdt
     PRIVATE     common_build_options
                 bsp_build_options)

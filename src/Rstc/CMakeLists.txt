@@ -6,7 +6,7 @@ target_sources(Samv71Rstc
     PUBLIC      Rstc.h
                 RstcRegisters.h)
 target_include_directories(Samv71Rstc
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Rstc
     PRIVATE     common_build_options
                 bsp_build_options)

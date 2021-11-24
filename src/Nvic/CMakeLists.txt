@@ -7,7 +7,7 @@ target_sources(Samv71Nvic
                 NvicRegisters.h
                 NvicVectorTable.h)
 target_include_directories(Samv71Nvic
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Nvic
     PRIVATE     common_build_options
                 bsp_build_options)

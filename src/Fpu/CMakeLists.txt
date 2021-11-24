@@ -6,7 +6,7 @@ target_sources(Samv71Fpu
     PUBLIC      Fpu.h
                 FpuRegisters.h)
 target_include_directories(Samv71Fpu
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Fpu
     PRIVATE     common_build_options
                 bsp_build_options)

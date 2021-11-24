@@ -6,7 +6,7 @@ target_sources(Samv71Uart
     PUBLIC      Uart.h
                 UartRegisters.h)
 target_include_directories(Samv71Uart
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Uart
     PRIVATE     common_build_options
                 bsp_build_options)

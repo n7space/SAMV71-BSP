@@ -7,7 +7,7 @@ target_sources(Samv71Pmc
                 PmcPeripheralId.h
                 PmcRegisters.h)
 target_include_directories(Samv71Pmc
-    PRIVATE     ..)
+    PUBLIC      ..)
 target_link_libraries(Samv71Pmc
     PRIVATE     common_build_options
                 bsp_build_options)

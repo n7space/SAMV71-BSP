@@ -31,7 +31,7 @@
 #include "PmcRegisters.h"
 
 #define PMC_MCKRDY_TIMEOUT 10000
-#define MEASUREMENT_ACCURACY 0.1
+#define MEASUREMENT_ACCURACY 0.1f
 
 static Pmc_Registers *const pmcRegisters = ((Pmc_Registers *)PMC_BASE_ADDRESS);
 
@@ -156,9 +156,9 @@ configureMainckXOsc(const Pmc_Config *const config, int *const errCode)
 	Pmc_measureMainck(&measurement);
 	if (!isBetweenUint32(measurement.measuredFreq,
 			    (uint32_t)((float)PMC_MAIN_CRYSTAL_FREQ
-					    * (1.0 - MEASUREMENT_ACCURACY)),
+					    * (1.0f - MEASUREMENT_ACCURACY)),
 			    (uint32_t)((float)PMC_MAIN_CRYSTAL_FREQ
-					    * (1.0 + MEASUREMENT_ACCURACY))))
+					    * (1.0f + MEASUREMENT_ACCURACY))))
 		return returnError(errCode,
 				Pmc_Error_MeasuredFrequencyIsIncorrect);
 

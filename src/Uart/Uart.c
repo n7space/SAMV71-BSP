@@ -317,7 +317,7 @@ handleTxInterrupt(Uart *const uart)
 void
 Uart_handleInterrupt(Uart *const uart)
 {
-	uint32_t status = uart->reg->sr;
+	uint32_t status = uart->reg->sr & uart->reg->imr;
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
 		handleRxInterrupt(uart);

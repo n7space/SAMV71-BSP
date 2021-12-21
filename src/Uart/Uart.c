@@ -278,6 +278,7 @@ handleRxInterrupt(Uart *const uart)
 		return;
 	}
 
+	//WARNING: If FIFO is full, bytes will be lost without any warning.
 	ByteFifo_push(uart->rxFifo, data);
 	if ((uart->rxHandler.characterCallback != NULL)
 			&& (data == uart->rxHandler.targetCharacter))

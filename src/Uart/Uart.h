@@ -128,9 +128,10 @@ typedef struct {
 } Uart_ErrorHandler;
 
 /// \brief Uart error codes.
-typedef enum {
-	Uart_ErrorCodes_Timeout =
-			1, ///< Timeout has occurred during a write/read operation.
+typedef enum
+{
+    Uart_ErrorCodes_Timeout = 1,      ///< Timeout has occurred during a write/read operation.
+    Uart_ErrorCodes_Rx_Fifo_Full = 2, ///< Rx fifo was full during new byte reception
 } Uart_ErrorCodes;
 
 /// \brief Uart device descriptor.

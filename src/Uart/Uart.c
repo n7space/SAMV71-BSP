@@ -268,18 +268,17 @@ Uart_getRxFifoCount(Uart *const uart)
 	return count;
 }
 
-static inline void
-handleRxInterrupt(Uart *const uart)
+static inline bool
+handleRxInterrupt(Uart *const uart, int* const errCode)
 {
 	uint8_t data = (uint8_t)uart->reg->rhr;
 
 	if (uart->rxFifo == NULL) {
 		disableRxIrq(uart);
-		return;
+		return true;
 	}
 
-	//WARNING: If FIFO is full, bytes will be lost without any warning.
-	ByteFifo_push(uart->rxFifo, data);
+	const bool retValue = ByteFifo_push(uart->rxFifo, data) ? true : returnError(errCode, Uart_ErrorCodes_Rx_Fifo_Full);
 	if ((uart->rxHandler.characterCallback != NULL)
 			&& (data == uart->rxHandler.targetCharacter))
 		uart->rxHandler.characterCallback(uart->rxHandler.characterArg);
@@ -287,6 +286,8 @@ handleRxInterrupt(Uart *const uart)
 			&& (ByteFifo_getCount(uart->rxFifo)
 					>= uart->rxHandler.targetLength))
 		uart->rxHandler.lengthCallback(uart->rxHandler.lengthArg);
+
+	return retValue;
 }
 
 static inline void
@@ -315,24 +316,26 @@ handleTxInterrupt(Uart *const uart)
 	}
 }
 
-void
-Uart_handleInterrupt(Uart *const uart)
+bool
+Uart_handleInterrupt(Uart *const uart, int * errCode)
 {
+	bool retValue = true;
 	uint32_t status = uart->reg->sr & uart->reg->imr;
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
-		handleRxInterrupt(uart);
+		retValue = handleRxInterrupt(uart, errCode);
 	if ((status & UART_SR_TXEMPTY_MASK) != 0u)
 		handleTxInterrupt(uart);
 
 	if (uart->errorHandler.callback == NULL)
-		return;
+		return retValue;
 
 	uint32_t errFlags = ((status & UART_SR_OVRE_MASK)
 			| (status & UART_SR_FRAME_MASK)
 			| (status & UART_SR_PARE_MASK));
 	if (errFlags != 0u)
 		uart->errorHandler.callback(errFlags, uart->errorHandler.arg);
+	return retValue;
 }
 
 inline bool

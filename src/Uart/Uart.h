@@ -240,7 +240,10 @@ void Uart_registerErrorHandler(
 
 /// \brief Default interrupt handler for Uart devices.
 /// \param [in] uart Uart device descriptor.
-void Uart_handleInterrupt(Uart *const uart);
+/// \param [out] errCode An error code generated during the operation.
+/// \retval true interrupt handling was successful
+/// \retval false interrupt handling error occured
+bool Uart_handleInterrupt(Uart* const uart, int* const errCode);
 
 /// \brief Checks status register for hardware errors.
 /// \param [in] statusRegister Twihs statrus register value.

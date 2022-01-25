@@ -290,7 +290,7 @@ handleRxInterrupt(Uart *const uart, int* const errCode)
 					>= uart->rxHandler.targetLength))
 		uart->rxHandler.lengthCallback(uart->rxHandler.lengthArg);
 
-	return retValue;
+	return true;
 }
 
 static inline void

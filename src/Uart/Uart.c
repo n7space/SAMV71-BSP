@@ -278,7 +278,10 @@ handleRxInterrupt(Uart *const uart, int* const errCode)
 		return true;
 	}
 
-	const bool retValue = ByteFifo_push(uart->rxFifo, data) ? true : returnError(errCode, Uart_ErrorCodes_Rx_Fifo_Full);
+	if(!ByteFifo_push(uart->rxFifo, data)) {
+		returnError(errCode, Uart_ErrorCodes_Rx_Fifo_Full);
+	}
+
 	if ((uart->rxHandler.characterCallback != NULL)
 			&& (data == uart->rxHandler.targetCharacter))
 		uart->rxHandler.characterCallback(uart->rxHandler.characterArg);

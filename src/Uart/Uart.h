@@ -115,6 +115,7 @@ typedef struct {
 	bool hasOverrunOccurred; // Hardware FIFO overrun detected.
 	bool hasFramingErrorOccurred; // Framing error detected.
 	bool hasParityErrorOccurred; // Parity error detected.
+	bool hasRxFifoFullErrorOccurred; // Rx FIFO full error detected.
 } Uart_ErrorFlags;
 
 /// \brief A function serving as a callback called upon detection of an error by

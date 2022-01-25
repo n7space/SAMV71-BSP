@@ -319,6 +319,13 @@ handleTxInterrupt(Uart *const uart)
 	}
 }
 
+inline bool
+Uart_hasAnyErrorOccured(Uart_ErrorFlags* const errFlags)
+{
+	return (errFlags->hasFramingErrorOccurred || errFlags->hasOverrunOccurred || errFlags->hasParityErrorOccurred
+            || errFlags->hasRxFifoFullErrorOccurred);
+}
+
 bool
 Uart_handleInterrupt(Uart *const uart, int * errCode)
 {
@@ -326,18 +333,20 @@ Uart_handleInterrupt(Uart *const uart, int * errCode)
 	uint32_t status = uart->reg->sr & uart->reg->imr;
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
-		retValue = handleRxInterrupt(uart, errCode);
+		retValue &= handleRxInterrupt(uart, errCode);
 	if ((status & UART_SR_TXEMPTY_MASK) != 0u)
 		handleTxInterrupt(uart);
 
 	if (uart->errorHandler.callback == NULL)
 		return retValue;
 
-	uint32_t errFlags = ((status & UART_SR_OVRE_MASK)
-			| (status & UART_SR_FRAME_MASK)
-			| (status & UART_SR_PARE_MASK));
-	if (errFlags != 0u)
-		uart->errorHandler.callback(errFlags, uart->errorHandler.arg);
+	Uart_ErrorFlags errorFlags;
+	Uart_getLinkErrors(status, &errorFlags);
+	if(*errCode == Uart_ErrorCodes_Rx_Fifo_Full) {
+		errorFlags.hasRxFifoFullErrorOccurred = true;
+	}
+	if(Uart_hasAnyErrorOccured(&errorFlags))
+   		uart->errorHandler.callback(errorFlags, uart->errorHandler.arg);
 	return retValue;
 }
 

@@ -120,7 +120,7 @@ typedef struct {
 
 /// \brief A function serving as a callback called upon detection of an error by
 /// hardware.
-typedef void (*UartErrorCallback)(uint32_t errorFlags, void *arg);
+typedef void (*UartErrorCallback)(Uart_ErrorFlags errorFlags, void *arg);
 
 /// \brief A descriptor of an error handler.
 typedef struct {

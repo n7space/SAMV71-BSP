@@ -330,21 +330,24 @@ bool
 Uart_handleInterrupt(Uart *const uart, int * errCode)
 {
 	bool retValue = true;
+	Uart_ErrorFlags errorFlags = { false, false, false, false };
+
 	uint32_t status = uart->reg->sr & uart->reg->imr;
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
-		retValue &= handleRxInterrupt(uart, errCode);
+	{
+	    retValue &= handleRxInterrupt(uart, errCode);
+	    if(*errCode == Uart_ErrorCodes_Rx_Fifo_Full) {
+	        errorFlags.hasRxFifoFullErrorOccurred = true;
+	    }
+	}
 	if ((status & UART_SR_TXEMPTY_MASK) != 0u)
 		handleTxInterrupt(uart);
 
 	if (uart->errorHandler.callback == NULL)
 		return retValue;
 
-	Uart_ErrorFlags errorFlags;
 	Uart_getLinkErrors(status, &errorFlags);
-	if(*errCode == Uart_ErrorCodes_Rx_Fifo_Full) {
-		errorFlags.hasRxFifoFullErrorOccurred = true;
-	}
 	if(Uart_hasAnyErrorOccured(&errorFlags))
    		uart->errorHandler.callback(errorFlags, uart->errorHandler.arg);
 	return retValue;

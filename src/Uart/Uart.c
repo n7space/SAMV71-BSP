@@ -319,7 +319,7 @@ handleTxInterrupt(Uart *const uart)
 	}
 }
 
-inline bool
+static inline bool
 Uart_hasAnyErrorOccured(Uart_ErrorFlags* const errFlags)
 {
 	return (errFlags->hasFramingErrorOccurred || errFlags->hasOverrunOccurred || errFlags->hasParityErrorOccurred

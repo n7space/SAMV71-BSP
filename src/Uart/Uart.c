@@ -336,10 +336,12 @@ Uart_handleInterrupt(Uart *const uart, int * errCode)
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
 	{
-	    retValue &= handleRxInterrupt(uart, errCode);
-	    if(*errCode == Uart_ErrorCodes_Rx_Fifo_Full) {
-	        errorFlags.hasRxFifoFullErrorOccurred = true;
-	    }
+		retValue &= handleRxInterrupt(uart, errCode);
+		if(errCode != NULL)
+		{
+			if(*errCode  == Uart_ErrorCodes_Rx_Fifo_Full)
+				errorFlags.hasRxFifoFullErrorOccurred = true;
+		}
 	}
 	if ((status & UART_SR_TXEMPTY_MASK) != 0u)
 		handleTxInterrupt(uart);

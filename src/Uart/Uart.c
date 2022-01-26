@@ -326,33 +326,29 @@ Uart_hasAnyErrorOccured(Uart_ErrorFlags* const errFlags)
             || errFlags->hasRxFifoFullErrorOccurred);
 }
 
-bool
-Uart_handleInterrupt(Uart *const uart, int * errCode)
+void
+Uart_handleInterrupt(Uart *const uart)
 {
-	bool retValue = true;
+	int errorCode = 0;
 	Uart_ErrorFlags errorFlags = { false, false, false, false };
 
 	uint32_t status = uart->reg->sr & uart->reg->imr;
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
 	{
-		retValue &= handleRxInterrupt(uart, errCode);
-		if(errCode != NULL)
-		{
-			if(*errCode  == Uart_ErrorCodes_Rx_Fifo_Full)
-				errorFlags.hasRxFifoFullErrorOccurred = true;
-		}
+		handleRxInterrupt(uart, &errorCode);
+		if(errorCode  == Uart_ErrorCodes_Rx_Fifo_Full)
+			errorFlags.hasRxFifoFullErrorOccurred = true;
 	}
 	if ((status & UART_SR_TXEMPTY_MASK) != 0u)
 		handleTxInterrupt(uart);
 
 	if (uart->errorHandler.callback == NULL)
-		return retValue;
+		return;
 
 	Uart_getLinkErrors(status, &errorFlags);
 	if(Uart_hasAnyErrorOccured(&errorFlags))
    		uart->errorHandler.callback(errorFlags, uart->errorHandler.arg);
-	return retValue;
 }
 
 inline bool

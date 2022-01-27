@@ -268,17 +268,20 @@ Uart_getRxFifoCount(Uart *const uart)
 	return count;
 }
 
-static inline void
-handleRxInterrupt(Uart *const uart)
+static inline bool
+handleRxInterrupt(Uart *const uart, int* const errCode)
 {
 	uint8_t data = (uint8_t)uart->reg->rhr;
 
 	if (uart->rxFifo == NULL) {
 		disableRxIrq(uart);
-		return;
+		return true;
 	}
 
-	ByteFifo_push(uart->rxFifo, data);
+	if(!ByteFifo_push(uart->rxFifo, data)) {
+		return returnError(errCode, Uart_ErrorCodes_Rx_Fifo_Full);
+	}
+
 	if ((uart->rxHandler.characterCallback != NULL)
 			&& (data == uart->rxHandler.targetCharacter))
 		uart->rxHandler.characterCallback(uart->rxHandler.characterArg);
@@ -286,6 +289,8 @@ handleRxInterrupt(Uart *const uart)
 			&& (ByteFifo_getCount(uart->rxFifo)
 					>= uart->rxHandler.targetLength))
 		uart->rxHandler.lengthCallback(uart->rxHandler.lengthArg);
+
+	return true;
 }
 
 static inline void
@@ -314,24 +319,36 @@ handleTxInterrupt(Uart *const uart)
 	}
 }
 
+static inline bool
+Uart_hasAnyErrorOccured(Uart_ErrorFlags* const errFlags)
+{
+	return (errFlags->hasFramingErrorOccurred || errFlags->hasOverrunOccurred || errFlags->hasParityErrorOccurred
+            || errFlags->hasRxFifoFullErrorOccurred);
+}
+
 void
 Uart_handleInterrupt(Uart *const uart)
 {
-	uint32_t status = uart->reg->sr;
+	int errorCode = 0;
+	Uart_ErrorFlags errorFlags = { false, false, false, false };
+
+	uint32_t status = uart->reg->sr & uart->reg->imr;
 	uart->reg->cr = UART_CR_RSTSTA_MASK;
 	if ((status & UART_SR_RXRDY_MASK) != 0u)
-		handleRxInterrupt(uart);
+	{
+		handleRxInterrupt(uart, &errorCode);
+		if(errorCode  == Uart_ErrorCodes_Rx_Fifo_Full)
+			errorFlags.hasRxFifoFullErrorOccurred = true;
+	}
 	if ((status & UART_SR_TXEMPTY_MASK) != 0u)
 		handleTxInterrupt(uart);
 
 	if (uart->errorHandler.callback == NULL)
 		return;
 
-	uint32_t errFlags = ((status & UART_SR_OVRE_MASK)
-			| (status & UART_SR_FRAME_MASK)
-			| (status & UART_SR_PARE_MASK));
-	if (errFlags != 0u)
-		uart->errorHandler.callback(errFlags, uart->errorHandler.arg);
+	Uart_getLinkErrors(status, &errorFlags);
+	if(Uart_hasAnyErrorOccured(&errorFlags))
+   		uart->errorHandler.callback(errorFlags, uart->errorHandler.arg);
 }
 
 inline bool

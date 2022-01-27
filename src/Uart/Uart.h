@@ -115,11 +115,12 @@ typedef struct {
 	bool hasOverrunOccurred; // Hardware FIFO overrun detected.
 	bool hasFramingErrorOccurred; // Framing error detected.
 	bool hasParityErrorOccurred; // Parity error detected.
+	bool hasRxFifoFullErrorOccurred; // Rx FIFO full error detected.
 } Uart_ErrorFlags;
 
 /// \brief A function serving as a callback called upon detection of an error by
 /// hardware.
-typedef void (*UartErrorCallback)(uint32_t errorFlags, void *arg);
+typedef void (*UartErrorCallback)(Uart_ErrorFlags errorFlags, void *arg);
 
 /// \brief A descriptor of an error handler.
 typedef struct {
@@ -128,9 +129,10 @@ typedef struct {
 } Uart_ErrorHandler;
 
 /// \brief Uart error codes.
-typedef enum {
-	Uart_ErrorCodes_Timeout =
-			1, ///< Timeout has occurred during a write/read operation.
+typedef enum
+{
+    Uart_ErrorCodes_Timeout = 1,      ///< Timeout has occurred during a write/read operation.
+    Uart_ErrorCodes_Rx_Fifo_Full = 2, ///< Rx fifo was full during new byte reception
 } Uart_ErrorCodes;
 
 /// \brief Uart device descriptor.
@@ -239,7 +241,7 @@ void Uart_registerErrorHandler(
 
 /// \brief Default interrupt handler for Uart devices.
 /// \param [in] uart Uart device descriptor.
-void Uart_handleInterrupt(Uart *const uart);
+void Uart_handleInterrupt(Uart* const uart);
 
 /// \brief Checks status register for hardware errors.
 /// \param [in] statusRegister Twihs statrus register value.
